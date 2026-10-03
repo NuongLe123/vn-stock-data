@@ -59,7 +59,8 @@ def get_latest_date_in_csv() -> str | None:
 
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 
-try:
+def fetch_and_append():
+    try:
         import yfinance as yf
     except Exception as e:
         log.error(f"Lỗi import yfinance: {type(e).__name__}: {e}")
@@ -100,7 +101,7 @@ try:
 
         for ticker in TICKERS:
             try:
-            # yfinance: end là exclusive nên +1 ngày; mã VN cần hậu tố .VN
+                # yfinance: end là exclusive nên +1 ngày; mã VN cần hậu tố .VN
                 end_excl = (yesterday + timedelta(days=1)).strftime("%Y-%m-%d")
                 df = yf.Ticker(f"{ticker}.VN").history(
                     start=start_str, end=end_excl, interval="1d", auto_adjust=False
@@ -115,7 +116,7 @@ try:
                 for col in ["open", "high", "low", "close"]:
                     df[col] = (df[col] / 1000).round(2)
                 df["time"] = df["time"].astype(str).str[:10]
-
+                
                 df_filtered = df[
                     (df["time"] >= start_str) & (df["time"] <= end_str)
                 ]
